@@ -52,11 +52,24 @@ export function VotePosterPage() {
       const cardW = WIDTH - 300;
       const cardH = HEIGHT - 140;
       const cardPath = new Path2D(roundedRectPath(cardX, cardY, cardW, cardH, 36));
+      // Outer drop shadow for subtle 3D depth
+      ctx.shadowColor = "rgba(15,23,42,0.2)";
+      ctx.shadowBlur = 38;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 18;
       ctx.fillStyle = "rgba(255,255,255,0.9)";
       ctx.fill(cardPath);
+      ctx.shadowColor = "transparent";
       ctx.strokeStyle = "rgba(16,185,129,0.42)";
       ctx.lineWidth = 3;
       ctx.stroke(cardPath);
+      // Top highlight line to enhance glass-like raised edge
+      ctx.strokeStyle = "rgba(255,255,255,0.72)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(cardX + 26, cardY + 22);
+      ctx.lineTo(cardX + cardW - 26, cardY + 22);
+      ctx.stroke();
 
       // Header
       ctx.fillStyle = "#047857";
@@ -96,10 +109,6 @@ export function VotePosterPage() {
         qrImg.src = qrApi;
       });
       ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
-
-      ctx.fillStyle = "#065f46";
-      ctx.font = "700 34px 'Segoe UI', 'Yu Gothic UI', sans-serif";
-      ctx.fillText("※ お一人1回の投票にご協力ください", 565, 990);
 
       if (forDownload) {
         const a = document.createElement("a");
