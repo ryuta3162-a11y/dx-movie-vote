@@ -82,11 +82,13 @@ export function VoteWebPage() {
         dxAwardName: candidatesById[dxWinner]?.label ?? dxWinner,
         innovatorAwardNo: innovatorWinner.toUpperCase(),
         innovatorAwardName: candidatesById[innovatorWinner]?.label ?? innovatorWinner,
+        // GAS側が旧キー（ideaAwardNo/ideaAwardName）でも受けられるよう互換を残す
+        ideaAwardNo: innovatorWinner.toUpperCase(),
+        ideaAwardName: candidatesById[innovatorWinner]?.label ?? innovatorWinner,
         userAgent: navigator.userAgent,
       };
       const res = await fetch(VOTE_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error(`status ${res.status}`);
