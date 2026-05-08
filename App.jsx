@@ -33,6 +33,7 @@ import { Database } from "lucide-react";
 import { PROFILE_ID } from "./profile-id.js";
 import { DashboardPresentation } from "./DashboardPresentation.jsx";
 import { VoteWebPage } from "./VoteWebPage.jsx";
+import { VotePosterPage } from "./VotePosterPage.jsx";
 import fukuyoFace from "./福與.png";
 import kojimaFace from "./小島.png";
 import chichibuFace from "./秩父.png";
@@ -253,6 +254,9 @@ const NO4_CHALLENGE_CARD_LINES = [
 function App() {
   if (PROFILE_ID === "vote") {
     return <VoteWebPage />;
+  }
+  if (PROFILE_ID === "vote-poster") {
+    return <VotePosterPage />;
   }
 
   const [isPlaying, setIsPlaying] = useState(true);
