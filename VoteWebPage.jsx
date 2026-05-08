@@ -1,10 +1,12 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import fukuyoFace from "./福與.png";
 import kojimaFace from "./小島.png";
 import chichibuFace from "./秩父.png";
 import moriyasuFace from "./moriyasu-kengo.png";
 
 const VOTE_ENDPOINT = (import.meta.env.VITE_VOTE_WEBHOOK_URL ?? "").trim();
+const VOTED_FLAG_KEY = "dx_award_voted_2026";
+const DEVICE_ID_KEY = "dx_award_device_id_2026";
 
 const CANDIDATES = [
   { id: "no1", label: "NO.1 鈴木 貴秀", image: "/suzuki-face.png" },
@@ -59,11 +61,32 @@ export function VoteWebPage() {
   const [innovatorWinner, setInnovatorWinner] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState("");
+  const [hasVoted, setHasVoted] = useState(false);
+  const [deviceId, setDeviceId] = useState("");
 
   const candidatesById = useMemo(() => Object.fromEntries(CANDIDATES.map((c) => [c.id, c])), []);
 
+  useEffect(() => {
+    try {
+      const voted = localStorage.getItem(VOTED_FLAG_KEY) === "1";
+      setHasVoted(voted);
+      let id = localStorage.getItem(DEVICE_ID_KEY) || "";
+      if (!id) {
+        id = `dv-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+        localStorage.setItem(DEVICE_ID_KEY, id);
+      }
+      setDeviceId(id);
+    } catch {
+      // ignore storage errors
+    }
+  }, []);
+
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (hasVoted) {
+      setMessage("この端末からの投票は完了しています。ありがとうございました。");
+      return;
+    }
     if (!dxWinner || !innovatorWinner) {
       setMessage("2つの賞を選んでから送信してください。");
       return;
@@ -85,6 +108,7 @@ export function VoteWebPage() {
         // GAS側が旧キー（ideaAwardNo/ideaAwardName）でも受けられるよう互換を残す
         ideaAwardNo: innovatorWinner.toUpperCase(),
         ideaAwardName: candidatesById[innovatorWinner]?.label ?? innovatorWinner,
+        deviceId,
         userAgent: navigator.userAgent,
       };
       const res = await fetch(VOTE_ENDPOINT, {
@@ -92,9 +116,26 @@ export function VoteWebPage() {
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error(`status ${res.status}`);
+      const json = await res.json().catch(() => ({}));
+      if (json && json.ok === false && json.reason === "ALREADY_VOTED") {
+        setHasVoted(true);
+        setMessage("この端末はすでに投票済みです。ありがとうございました。");
+        try {
+          localStorage.setItem(VOTED_FLAG_KEY, "1");
+        } catch {
+          // ignore
+        }
+        return;
+      }
       setMessage("投票を受け付けました。ありがとうございます。");
       setDxWinner("");
       setInnovatorWinner("");
+      setHasVoted(true);
+      try {
+        localStorage.setItem(VOTED_FLAG_KEY, "1");
+      } catch {
+        // ignore
+      }
     } catch (err) {
       console.error(err);
       setMessage("送信に失敗しました。通信状況を確認してもう一度お試しください。");
@@ -125,24 +166,33 @@ export function VoteWebPage() {
           </div>
         </header>
 
-        <form className="mt-5 space-y-4" onSubmit={onSubmit}>
-          <CandidateRadioGrid title="DX大賞" selectedId={dxWinner} onChange={setDxWinner} />
-          <CandidateRadioGrid title="イノベーター賞" selectedId={innovatorWinner} onChange={setInnovatorWinner} />
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full rounded-2xl bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-600 px-4 py-3 text-[1.08rem] font-black tracking-[0.04em] text-white shadow-[0_14px_30px_rgba(5,150,105,0.32)] transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60 md:text-[1.18rem]"
-          >
-            {submitting ? "送信中..." : "この内容で投票する"}
-          </button>
-
-          {message ? (
-            <p className="rounded-lg border border-emerald-300 bg-white px-3 py-2 text-[0.98rem] font-semibold text-emerald-900 md:text-[1.05rem]">
-              {message}
+        {hasVoted ? (
+          <section className="mt-5 rounded-3xl border border-emerald-300 bg-white p-6 text-center shadow-[0_14px_34px_rgba(15,23,42,0.12)] md:p-8">
+            <p className="text-[1.35rem] font-black text-emerald-800 md:text-[1.7rem]">投票ありがとうございました</p>
+            <p className="mt-2 text-[1rem] font-semibold text-emerald-900 md:text-[1.1rem]">
+              ご協力ありがとうございます。投票は完了しています。
             </p>
-          ) : null}
-        </form>
+          </section>
+        ) : (
+          <form className="mt-5 space-y-4" onSubmit={onSubmit}>
+            <CandidateRadioGrid title="DX大賞" selectedId={dxWinner} onChange={setDxWinner} />
+            <CandidateRadioGrid title="イノベーター賞" selectedId={innovatorWinner} onChange={setInnovatorWinner} />
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full rounded-2xl bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-600 px-4 py-3 text-[1.08rem] font-black tracking-[0.04em] text-white shadow-[0_14px_30px_rgba(5,150,105,0.32)] transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60 md:text-[1.18rem]"
+            >
+              {submitting ? "送信中..." : "この内容で投票する"}
+            </button>
+
+            {message ? (
+              <p className="rounded-lg border border-emerald-300 bg-white px-3 py-2 text-[0.98rem] font-semibold text-emerald-900 md:text-[1.05rem]">
+                {message}
+              </p>
+            ) : null}
+          </form>
+        )}
       </main>
     </div>
   );

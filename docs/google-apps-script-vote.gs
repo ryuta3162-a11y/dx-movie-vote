@@ -21,6 +21,11 @@ function doPost(e) {
     const body = JSON.parse(e.postData.contents || "{}");
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     const resultSheet = getOrCreateResultSheet_(ss);
+    const deviceId = String(body.deviceId || "").trim();
+
+    if (deviceId && existsDeviceVote_(resultSheet, deviceId)) {
+      return jsonOutput_({ ok: false, reason: "ALREADY_VOTED" });
+    }
 
     resultSheet.appendRow([
       body.timestamp || new Date().toISOString(),
@@ -30,6 +35,7 @@ function doPost(e) {
       body.innovatorAwardNo || body.ideaAwardNo || "",
       body.innovatorAwardName || body.ideaAwardName || "",
       body.userAgent || "",
+      deviceId,
     ]);
 
     updateSummarySheet_(ss, resultSheet);
@@ -64,17 +70,19 @@ function ensureResultHeader_(sheet) {
       "innovatorAwardNo",
       "innovatorAwardName",
       "userAgent",
+      "deviceId",
     ]);
     return;
   }
-  const header = sheet.getRange(1, 1, 1, 7).getValues()[0];
+  const header = sheet.getRange(1, 1, 1, 8).getValues()[0];
   const needsHeader =
     header[0] !== "timestamp" ||
     header[2] !== "dxAwardNo" ||
-    (header[4] !== "innovatorAwardNo" && header[4] !== "ideaAwardNo");
+    (header[4] !== "innovatorAwardNo" && header[4] !== "ideaAwardNo") ||
+    header[7] !== "deviceId";
   if (needsHeader) {
     sheet.insertRowBefore(1);
-    sheet.getRange(1, 1, 1, 7).setValues([
+    sheet.getRange(1, 1, 1, 8).setValues([
       [
         "timestamp",
         "voterName",
@@ -83,9 +91,20 @@ function ensureResultHeader_(sheet) {
         "innovatorAwardNo",
         "innovatorAwardName",
         "userAgent",
+        "deviceId",
       ],
     ]);
   }
+}
+
+function existsDeviceVote_(sheet, deviceId) {
+  const rows = sheet.getLastRow();
+  if (rows <= 1) return false;
+  const values = sheet.getRange(2, 8, rows - 1, 1).getValues();
+  for (let i = 0; i < values.length; i += 1) {
+    if (String(values[i][0] || "").trim() === deviceId) return true;
+  }
+  return false;
 }
 
 function updateSummarySheet_(ss, resultSheet) {
@@ -103,7 +122,7 @@ function updateSummarySheet_(ss, resultSheet) {
   }
 
   if (rows > 1) {
-    const values = resultSheet.getRange(2, 1, rows - 1, 7).getValues();
+    const values = resultSheet.getRange(2, 1, rows - 1, 8).getValues();
     for (let i = 0; i < values.length; i += 1) {
       const dxNo = normalizeNo_(values[i][2]);
       const innovatorNo = normalizeNo_(values[i][4]);
