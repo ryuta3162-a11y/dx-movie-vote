@@ -1,0 +1,53 @@
+{
+  "name": "dx-award-movie",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "render:mp4": "node scripts/render-movie.mjs",
+    "prep:no1-voice-timeline": "node scripts/prepare-no1-voice-timeline.mjs",
+    "render:no1": "node scripts/render-no1.mjs",
+    "render:no1:voice": "node scripts/render-no1-voice.mjs",
+    "release:no1:voice": "npm run prep:no1-voice-timeline && npm run render:no1 && npm run render:no1:voice",
+    "prep:no2-voice-timeline": "node scripts/prepare-no2-voice-timeline.mjs",
+    "render:no2": "node scripts/render-no2.mjs",
+    "render:no2:voice": "node scripts/render-no2-voice.mjs",
+    "release:no2:voice": "npm run prep:no2-voice-timeline && npm run render:no2 && npm run render:no2:voice",
+    "prep:no3-voice-timeline": "node scripts/prepare-no3-voice-timeline.mjs",
+    "render:no3": "node scripts/render-no3.mjs",
+    "render:no3:voice": "node scripts/render-no3-voice.mjs",
+    "release:no3:voice": "npm run prep:no3-voice-timeline && npm run render:no3 && npm run render:no3:voice",
+    "prep:no4-voice-timeline": "node scripts/prepare-no4-voice-timeline.mjs",
+    "render:no4": "node scripts/render-no4.mjs",
+    "render:no4:voice": "node scripts/render-no4-voice.mjs",
+    "release:no4:voice": "npm run prep:no4-voice-timeline && npm run render:no4 && npm run render:no4:voice",
+    "render:no5": "node scripts/render-no5.mjs",
+    "render:no6": "node scripts/render-no6.mjs",
+    "render:no7": "node scripts/render-no7.mjs",
+    "render:no6:voice": "node scripts/render-no6-voice.mjs",
+    "render:no7:voice": "node scripts/render-no7-voice.mjs",
+    "prep:no5-voice-timeline": "node scripts/prepare-no5-voice-timeline.mjs",
+    "render:no5:voice": "node scripts/render-no5-voice.mjs",
+    "release:no5:voice": "npm run prep:no5-voice-timeline && npm run render:no5 && npm run render:no5:voice",
+    "release:no345:voice": "npm run release:no3:voice && npm run release:no4:voice && npm run release:no5:voice",
+    "release:no6:voice": "npm run render:no6 && npm run render:no6:voice",
+    "release:all:voice": "npm run release:no1:voice && npm run release:no2:voice && npm run release:no3:voice && npm run release:no4:voice && npm run release:no5:voice && npm run release:no6:voice",
+    "release:no4": "npm run prep:no4-video && node scripts/render-no4.mjs",
+    "prep:no4-video": "node scripts/prepare-no4-screen-record.mjs"
+  },
+  "dependencies": {
+    "lucide-react": "^0.542.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "playwright": "^1.59.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "vite": "^7.1.5"
+  }
+}

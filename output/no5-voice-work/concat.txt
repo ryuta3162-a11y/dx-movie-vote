@@ -1,0 +1,2 @@
+file 'C:/Users/81703/OneDrive/デスクトップ/DX MOVIE/output/no5-voice-work/seg-00-8.69s.wav'
+file 'C:/Users/81703/OneDrive/デスクトップ/DX MOVIE/output/no5-voice-work/seg-01-36.19s.wav'

@@ -1,0 +1,7 @@
+file 'C:/Users/81703/OneDrive/デスクトップ/DX MOVIE/output/no2-voice-work/seg-00-7.8s.wav'
+file 'C:/Users/81703/OneDrive/デスクトップ/DX MOVIE/output/no2-voice-work/seg-01-8.52s.wav'
+file 'C:/Users/81703/OneDrive/デスクトップ/DX MOVIE/output/no2-voice-work/seg-02-8.98s.wav'
+file 'C:/Users/81703/OneDrive/デスクトップ/DX MOVIE/output/no2-voice-work/seg-03-7.9s.wav'
+file 'C:/Users/81703/OneDrive/デスクトップ/DX MOVIE/output/no2-voice-work/seg-04-6.6s.wav'
+file 'C:/Users/81703/OneDrive/デスクトップ/DX MOVIE/output/no2-voice-work/seg-05-6.84s.wav'
+file 'C:/Users/81703/OneDrive/デスクトップ/DX MOVIE/output/no2-voice-work/seg-06-7.18s.wav'
