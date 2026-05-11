@@ -9,13 +9,13 @@ const VOTED_FLAG_KEY = "dx_award_voted_2026";
 const DEVICE_ID_KEY = "dx_award_device_id_2026";
 
 const CANDIDATES = [
-  { id: "no1", label: "NO.1 鈴木 貴秀", image: "/suzuki-face.png" },
-  { id: "no2", label: "NO.2 福與 翔大", image: fukuyoFace },
-  { id: "no3", label: "NO.3 小島 紳哉", image: kojimaFace },
-  { id: "no4", label: "NO.4 秩父瀧", image: chichibuFace },
-  { id: "no5", label: "NO.5 森保 建吾", image: moriyasuFace },
-  { id: "no6", label: "NO.6 日下 竜太", image: "/no6/kusaka-face.png" },
-  { id: "no7", label: "NO.7 渡邊 将樹", image: "/no7/no7-face.png" },
+  { id: "no1", no: "NO.1", name: "鈴木 貴秀", work: "テリトリー数値ダッシュボード化", image: "/suzuki-face.png" },
+  { id: "no2", no: "NO.2", name: "福與 翔大", work: "ベンチマークアプリ作成", image: fukuyoFace },
+  { id: "no3", no: "NO.3", name: "小島 紳哉", work: "自作LP作成", image: kojimaFace },
+  { id: "no4", no: "NO.4", name: "秩父瀧", work: "新店ガントチャート生成ツール", image: chichibuFace },
+  { id: "no5", no: "NO.5", name: "森保 建吾", work: "パーソナル訴求力UP", image: moriyasuFace },
+  { id: "no6", no: "NO.6", name: "日下 竜太", work: "HP・外部販促強化", image: "/no6/kusaka-face.png" },
+  { id: "no7", no: "NO.7", name: "渡邊 将樹", work: "ToDoリスト作成", image: "/no7/no7-face.png" },
 ];
 
 function CandidateRadioGrid({ title, selectedId, onChange }) {
@@ -43,11 +43,14 @@ function CandidateRadioGrid({ title, selectedId, onChange }) {
             <div className="flex items-center gap-3">
               <img
                 src={candidate.image}
-                alt={candidate.label}
+                alt={`${candidate.no} ${candidate.name}`}
                 className="h-16 w-16 rounded-full border border-slate-200 object-cover"
                 loading="lazy"
               />
-              <span className="text-[1rem] font-bold leading-snug text-slate-800 md:text-[1.08rem]">{candidate.label}</span>
+              <span className="leading-snug">
+                <span className="block text-[1rem] font-bold text-slate-800 md:text-[1.08rem]">{`${candidate.no} ${candidate.name}`}</span>
+                <span className="mt-0.5 block text-[0.86rem] font-semibold text-emerald-800 md:text-[0.94rem]">{candidate.work}</span>
+              </span>
             </div>
           </label>
         ))}
@@ -102,12 +105,12 @@ export function VoteWebPage() {
       const payload = {
         timestamp: new Date().toISOString(),
         dxAwardNo: dxWinner.toUpperCase(),
-        dxAwardName: candidatesById[dxWinner]?.label ?? dxWinner,
+        dxAwardName: candidatesById[dxWinner]?.name ?? dxWinner,
         innovatorAwardNo: innovatorWinner.toUpperCase(),
-        innovatorAwardName: candidatesById[innovatorWinner]?.label ?? innovatorWinner,
+        innovatorAwardName: candidatesById[innovatorWinner]?.name ?? innovatorWinner,
         // GAS側が旧キー（ideaAwardNo/ideaAwardName）でも受けられるよう互換を残す
         ideaAwardNo: innovatorWinner.toUpperCase(),
-        ideaAwardName: candidatesById[innovatorWinner]?.label ?? innovatorWinner,
+        ideaAwardName: candidatesById[innovatorWinner]?.name ?? innovatorWinner,
         deviceId,
         userAgent: navigator.userAgent,
       };

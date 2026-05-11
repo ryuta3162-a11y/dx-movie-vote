@@ -134,3 +134,11 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# DX MOVIE artifacts (keep local, do not push)
+output/
+.recording-tmp/
+*.mp4
+*.mov
+*.webm
+*.wav
